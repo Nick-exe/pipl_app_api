@@ -5,6 +5,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 from django.contrib.gis.geos import Point
+import json
 
 
 from core.models import Tag
@@ -59,6 +60,33 @@ class PrivateTagsApiTestCase(TestCase):
         tag = Tag.objects.create(user=self.user, name="likes_chinese", location=Point(6.45390, 3.51290))
 
         res = self.client.get(TAGS_URL)
+        print(json.dumps(res.data))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), 1)
-        self.assertEqual(res.data[0]['name'], tag.name)
+        self.assertEqual(len(res.data['features']), 1)
+        self.assertEqual(res.data['features'][0]['properties']['name'], tag.name)
+
+    def test_create_tags_successful(self):
+        """ Test creating a new tag"""
+        location = {
+                "type": "Point",
+                "coordinates": [
+                    8.560752868652344,
+                    4.722883447755574
+                ]
+            }
+        payload = {'name': 'likes_jewellry', 'location': location}
+        self.client.post(TAGS_URL, payload, format='json')
+
+        exists = Tag.objects.filter(
+            user=self.user,
+            name=payload['name']
+        ).exists()
+        self.assertTrue(exists)
+
+    def test_create_tag_invalid_name(self):
+        """ Test creating a new tag with invalid name"""
+        payload = {'name': '', 'location': Point(77.39345, 51.36420)}
+        res = self.client.post(TAGS_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+

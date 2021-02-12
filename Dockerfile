@@ -14,7 +14,6 @@ RUN apk add --update --no-cache  geos \
         geos-dev \
         g++ \
         gcc \
-        libgdal-dev \
         binutils 
 RUN pip install -r requirements.txt
 RUN apk del .tmp-build-deps
