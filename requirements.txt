@@ -3,6 +3,6 @@ djangorestframework>=3.12.2,<3.13.0
 djangorestframework-gis
 psycopg2>=2.8.6,<2.9.0
 gdal==3.1.4
-GDAL
+pyyaml
 
 flake8>=3.8.4,<3.9.0
