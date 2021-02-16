@@ -10,8 +10,7 @@ from geopy.exc import GeocoderTimedOut
 from geopy.geocoders import GoogleV3
 from urllib.request import URLError
 
-
-geocoder = GoogleV3(api_key='AIzaSyCbvvxY0pfUvBZkMjn4k5b54ZG6qkOeyJ8')
+geocoder = GoogleV3(api_key=settings.GOOGLE_MAPS_API_KEY)
 
 class UserManager(BaseUserManager):
 
