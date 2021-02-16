@@ -14,7 +14,7 @@ class TagSerializer(GeoFeatureModelSerializer):
         read_only_fields = ('id',)
 
 
-class PipSerializer(serializers.Serializer):
+class PipSerializer(serializers.ModelSerializer):
     """Serializer for Pip objects"""
 
     class Meta:
@@ -22,7 +22,7 @@ class PipSerializer(serializers.Serializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
-class NoteSerializer(serializers.Serializer):
+class NoteSerializer(serializers.ModelSerializer):
     """Serializer for Note objects"""
 
     class Meta:
@@ -30,7 +30,7 @@ class NoteSerializer(serializers.Serializer):
         fields = '__all__'
         read_only_fields = ('owner', 'timestamp', 'id')
 
-class ReminderSerializer(serializers.Serializer):
+class ReminderSerializer(serializers.ModelSerializer):
     """Serializer for Reminder objects"""
 
     class Meta:

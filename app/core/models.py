@@ -1,8 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.conf import settings
+
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
+from django.contrib.gis import geos
+
+from geopy.exc import GeocoderTimedOut
+from geopy.geocoders import GoogleV3
+from urllib.request import URLError
+
+
+geocoder = GoogleV3(api_key='AIzaSyCbvvxY0pfUvBZkMjn4k5b54ZG6qkOeyJ8')
 
 class UserManager(BaseUserManager):
 
@@ -54,6 +63,7 @@ class Reminder(models.Model):
     date = models.DateField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     pip = models.ForeignKey('Pip', on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -76,14 +86,33 @@ class Pip(models.Model):
     location = models.PointField(geography=True, blank=True, null=True)
     tags = models.ManyToManyField('Tag', blank=True)
     phone = models.CharField(max_length=255, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.location:
+            user_address = self.address
+            try:
+                user_location = geocoder.geocode(user_address, timeout=10)
+            except(URLError, ValueError, TypeError, GeocoderTimedOut) as e:
+                print("Error: geocode failed on input %s with message %s"%(user_address, e.message))
+                pass
+            if user_location:
+                longitude = user_location.longitude
+                latitude = user_location.latitude
+                point = "POINT(%s %s)" % (longitude, latitude)
+                self.location = geos.fromstr(point)
+            else:
+                print('Could not GEOCODE address')
+                print(self.location)
+        super(Pip, self).save(*args, **kwargs)
+
 
 class Note(models.Model):
     """Note to be tied to pips"""
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notes_owner",blank=True,null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notes_owner",blank=True,null=True, on_delete=models.CASCADE)
     pip = models.ForeignKey('Pip', on_delete=models.SET_NULL, null=True)
     pinned = models.BooleanField(default=False)
     note_title = models.CharField(max_length=400)
