@@ -12,10 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 from pathlib import Path
-from dotenv import load_dotenv
+from glob import glob
 
-project_folder = os.path.expanduser('~/app')  # adjust as appropriate
-load_dotenv(os.path.join(project_folder, '.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -145,3 +143,6 @@ AUTH_USER_MODEL = 'core.User'
 # GOOGLEMAPS API KEY
 GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
 
+
+GDAL_LIBRARY_PATH=glob('/usr/lib/libgdal.so.*')[0]
+GEOS_LIBRARY_PATH=glob('/usr/lib/libgeos_c.so.*')[0]
