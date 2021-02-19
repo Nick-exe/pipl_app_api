@@ -60,3 +60,12 @@ class PipDetailSerializer(PipSerializer):
         fields = ('id', 'name', 'tags', 'pip_notes', 
         'category', 'date_met', 'address', 'location', 'phone')
         read_only_fields = ('id',)
+
+
+class PiplImageSerializer(serializers.ModelSerializer):
+    """Serializer for uploading image to pips"""
+
+    class Meta:
+        model = Pip
+        fields = ('id', 'image',)
+        read_only_fields = ('id',)
