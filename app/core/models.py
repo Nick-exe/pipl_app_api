@@ -96,7 +96,7 @@ class Pip(models.Model):
     location = models.PointField(geography=True, blank=True, null=True)
     tags = models.ManyToManyField('Tag', blank=True)
     phone = models.CharField(max_length=255, blank=True)
-    image = models.ImageField(null=True, upload_to=pipl_image_file_path)
+    image = models.ImageField(null=True, blank=True, upload_to=pipl_image_file_path)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
