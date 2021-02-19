@@ -4,10 +4,9 @@ LABEL Nick Essien
 ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /requirements.txt
-RUN apk add --update --no-cache postgresql-client
-RUN apk add --update --no-cache python python-dev
+RUN apk add --update --no-cache postgresql-client jpeg-dev
 RUN apk add --update --no-cache --virtual .tmp-build-deps \
-    gcc libc-dev linux-headers postgresql-dev
+    gcc libc-dev linux-headers postgresql-dev gdal-dev
 RUN apk add --update --no-cache  geos \
         proj \
         gdal \
@@ -16,8 +15,7 @@ RUN apk add --update --no-cache  geos \
         g++ \
         gcc \
         binutils \
-        --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
-        --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
+        musl-dev zlib zlib-dev
 RUN pip install -r requirements.txt
 RUN apk del .tmp-build-deps
 
@@ -26,5 +24,9 @@ WORKDIR /app
 COPY ./app /app
 COPY .env /.env
 
+RUN mkdir -p /vol/web/media
+RUN mkdir -p /vol/web/static
 RUN adduser -D user
+RUN chown -R user:user /vol/
+RUN chmod -R 755 /vol/web/
 USER user

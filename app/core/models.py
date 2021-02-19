@@ -1,3 +1,6 @@
+import uuid
+import os
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.conf import settings
@@ -11,6 +14,14 @@ from geopy.geocoders import GoogleV3
 from urllib.request import URLError
 
 geocoder = GoogleV3(api_key=settings.GOOGLE_MAPS_API_KEY)
+
+def pipl_image_file_path(instance, filename):
+    """generate filepath for new pipl image"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+
+    return os.path.join('uploads/pipl/', filename)
+
 
 class UserManager(BaseUserManager):
 
@@ -85,6 +96,7 @@ class Pip(models.Model):
     location = models.PointField(geography=True, blank=True, null=True)
     tags = models.ManyToManyField('Tag', blank=True)
     phone = models.CharField(max_length=255, blank=True)
+    image = models.ImageField(null=True, upload_to=pipl_image_file_path)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
