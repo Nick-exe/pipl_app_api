@@ -91,7 +91,7 @@ class Pip(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.location:
+        if not self.location and self.address:
             user_address = self.address
             try:
                 user_location = geocoder.geocode(user_address, timeout=10)
@@ -112,7 +112,7 @@ class Pip(models.Model):
 class Note(models.Model):
     """Note to be tied to pips"""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notes_owner",blank=True,null=True, on_delete=models.CASCADE)
-    pip = models.ForeignKey('Pip', on_delete=models.SET_NULL, null=True)
+    pip = models.ForeignKey('Pip', related_name="pip_notes", on_delete=models.SET_NULL, null=True)
     pinned = models.BooleanField(default=False)
     note_title = models.CharField(max_length=400)
     note_content = models.TextField(max_length=20000, blank=True)
