@@ -38,10 +38,22 @@ class PipViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    def _params_to_ints(self, qs):
+        """convert a list of string ids to a list of integers"""
+        return [int(str_id) for str_id in qs.split(',')]
 
     def get_queryset(self):
         """ Return objects for the current authenticated user only"""
-        return self.queryset.filter(user=self.request.user).order_by('-name')
+        tags = self.request.query_params.get('tags')
+        category = self.request.query_params.get('category')
+        queryset = self.queryset
+        if tags:
+            tag_ids = self._params_to_ints(tags)
+            queryset = queryset.filter(tags__id__in=tag_ids)
+        if category:
+            queryset = queryset.filter(category=category)
+        return queryset.filter(user=self.request.user)
+
 
     def get_serializer_class(self):
         """ Return appropriate serializer class"""
