@@ -19,8 +19,7 @@ services:
       - DB_PASS=supersecretpassword
     depends_on:
       - db
-    env_file:
-      - .env
+    env_file: .env
 
 
   db:

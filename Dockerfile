@@ -3,6 +3,7 @@ LABEL Nick Essien
 
 ENV PYTHONUNBUFFERED 1
 
+COPY ./env /.env
 COPY ./requirements.txt /requirements.txt
 RUN apk add --update --no-cache postgresql-client jpeg-dev
 RUN apk add --update --no-cache --virtual .tmp-build-deps \
@@ -22,7 +23,6 @@ RUN apk del .tmp-build-deps
 RUN mkdir /app
 WORKDIR /app
 COPY ./app /app
-COPY .env /.env
 
 RUN mkdir -p /vol/web/media
 RUN mkdir -p /vol/web/static

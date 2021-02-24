@@ -5,21 +5,19 @@ python:
 services:
   - docker
 
-# addons:
-#   apt:
-#     packages:
-#     - gdal
-#     - libgdal-dev
-#     - libnetcdf-dev
-
 before_install:
+  - pip install docker-compose
   - sudo add-apt-repository --yes ppa:ubuntugis/ppa
   - sudo apt-get --quiet update
   - sudo apt-get install --yes libgdal-dev gdal-bin
+  - export CPLUS_INCLUDE_PATH=/usr/include/gdal
+  - export C_INCLUDE_PATH=/usr/include/gdal
+  
 install:
   - pip install gdal==`gdal-config --version`
+  
 
-before_script: pip install docker-compose
+# before_script: 
 
 script: 
   - docker-compose run app sh -c "python manage.py test"
