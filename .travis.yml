@@ -5,11 +5,19 @@ python:
 services:
   - docker
 
-addons:
-  apt:
-    packages:
-    - libgdal-dev
-    - libnetcdf-dev
+# addons:
+#   apt:
+#     packages:
+#     - gdal
+#     - libgdal-dev
+#     - libnetcdf-dev
+
+before_install:
+  - sudo add-apt-repository --yes ppa:ubuntugis/ppa
+  - sudo apt-get --quiet update
+  - sudo apt-get install --yes libgdal-dev gdal-bin
+install:
+  - pip install gdal==`gdal-config --version`
 
 before_script: pip install docker-compose
 
