@@ -5,6 +5,12 @@ python:
 services:
   - docker
 
+addons:
+  apt:
+    packages:
+    - libgdal-dev
+    - libnetcdf-dev
+
 before_script: pip install docker-compose
 
 script: 
